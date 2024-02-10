@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WalkInStyleAPI", "WalkInStyleAPI\WalkInStyleAPI.csproj", "{0C5AA511-0327-4D75-9CE6-A37874B50793}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C5AA511-0327-4D75-9CE6-A37874B50793}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C5AA511-0327-4D75-9CE6-A37874B50793}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C5AA511-0327-4D75-9CE6-A37874B50793}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C5AA511-0327-4D75-9CE6-A37874B50793}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5A1A141A-C1CD-4405-B38F-0DE96F71A61A}
+	EndGlobalSection
+EndGlobal

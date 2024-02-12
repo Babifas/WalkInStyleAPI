@@ -2,20 +2,10 @@
 
 namespace WalkInStyleAPI.Models.User
 {
-    public class User
+    public class UserViewDto
     {
-        [Key]
         public int UserId { get; set; }
-        [Required]
         public string? UserName { get; set; }
-        [Required]
-        [MinLength(6)]
-        public string? Password { get; set; }
-        [Required]
-        [EmailAddress]
         public string? UserEmail { get; set; }
-        public string? Role { get; set; }
-
-
     }
 }

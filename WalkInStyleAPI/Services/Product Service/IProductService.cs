@@ -1,4 +1,5 @@
-﻿using WalkInStyleAPI.Models;
+﻿
+using WalkInStyleAPI.Models.Product;
 
 namespace WalkInStyleAPI.Services
 {

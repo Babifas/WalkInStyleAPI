@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WalkInStyleAPI.Data;
-using WalkInStyleAPI.Models;
+using WalkInStyleAPI.Models.Product;
 
 namespace WalkInStyleAPI.Services
 {

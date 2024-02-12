@@ -6,7 +6,7 @@ namespace WalkInStyleAPI.Data
 {
     public class ApDbContext:DbContext
     {
-      public ApDbContext(DbContextOptions options):base(options) 
+      public ApDbContext(DbContextOptions<ApDbContext>options):base(options) 
         { 
         
         

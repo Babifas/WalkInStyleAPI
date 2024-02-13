@@ -24,6 +24,7 @@ namespace WalkInStyleAPI.Services.User_Service
                 string salt = BCrypt.Net.BCrypt.GenerateSalt();
                 var HashPassword=BCrypt.Net.BCrypt.HashPassword(user.Password, salt);
                 _user.Password=HashPassword;
+                _user.Role = "user";
                 _context.Users.Add(_user);
                 await _context.SaveChangesAsync();
                 return true; 
@@ -47,15 +48,14 @@ namespace WalkInStyleAPI.Services.User_Service
             }
             return null ;
         }
-        public async Task<bool> Login(LoginDto user)
+        public async Task<User> Login(LoginDto user)
         {
             var IsUserExist = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == user.UserEmail);
-            if(IsUserExist != null)
+            if (IsUserExist != null && BCrypt.Net.BCrypt.Verify(user.Password, IsUserExist.Password))
             {
-                bool checkPassword = BCrypt.Net.BCrypt.Verify(user.Password, IsUserExist.Password);
-                return checkPassword;
+                return IsUserExist;
             }
-            return false;
+            return null;
         }
     }
 }

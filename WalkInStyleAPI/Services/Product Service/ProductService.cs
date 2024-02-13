@@ -25,6 +25,7 @@ namespace WalkInStyleAPI.Services
             }
             return null;
         }
+
         public async Task AddProduct(Product product)
         {
            await _context.Products.AddAsync(product);

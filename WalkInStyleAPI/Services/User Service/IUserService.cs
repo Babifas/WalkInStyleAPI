@@ -7,6 +7,6 @@ namespace WalkInStyleAPI.Services.User_Service
         Task<bool> RegisterUser(RegisterUserDto user);
         Task<List<UserViewDto>> GetAllUsers();
         Task<UserViewDto> GetUserById(int id);
-        Task<bool> Login(LoginDto user);
+        Task<User> Login(LoginDto user);
     }
 }

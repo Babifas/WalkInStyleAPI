@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using WalkInStyleAPI.Models.User;
 using WalkInStyleAPI.Services.User_Service;
 
@@ -10,12 +15,15 @@ namespace WalkInStyleAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService) 
+        private readonly IConfiguration _configuration;
+        public UserController(IUserService userService,IConfiguration configuration) 
         { 
-            _userService = userService;   
+            _userService = userService;
+            _configuration = configuration;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetStudents()
+        [HttpGet("GetUsers")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> GetUsers()
         {
             try
             {
@@ -26,6 +34,8 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> GetUserById(int id)
         {
             try
@@ -63,16 +73,43 @@ namespace WalkInStyleAPI.Controllers
         {
             try
             {
-                var checkLogin = await _userService.Login(user);
-                if (checkLogin)
+                var _user = await _userService.Login(user);
+                if (_user!=null)
                 {
-                    return Ok("Login Successfull");  
+                    string token = GenerateJwtToken(_user);
+
+                    return Ok(new {id=_user.UserId,token=token});  
                 }
                 return NotFound("Incorrect email or password");
             }catch(Exception ex)
             {
                 return BadRequest($"Could not login {ex.Message}");
             }
+        }
+        private string GenerateJwtToken(User user)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new Claim(ClaimTypes.Role, user.Role),
+            // Add additional claims as needed
+        };
+
+            var token = new JwtSecurityToken(
+                //issuer: _configuration["Jwt:Issuer"],
+                //audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds
+            );
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            return tokenHandler.WriteToken(token);
         }
     }
 }

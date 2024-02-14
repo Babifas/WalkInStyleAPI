@@ -2,7 +2,8 @@
 using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using WalkInStyleAPI.Data;
-using WalkInStyleAPI.Models.User;
+using WalkInStyleAPI.Models;
+using WalkInStyleAPI.Models.DTOs.User;
 
 namespace WalkInStyleAPI.Services.User_Service
 {

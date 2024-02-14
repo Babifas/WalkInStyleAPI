@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WalkInStyleAPI.Models.User
+namespace WalkInStyleAPI.Models
 {
-    public class RegisterUserDto
+    public class User
     {
+        [Key]
+        public int UserId { get; set; }
         [Required]
         public string? UserName { get; set; }
         [Required]
@@ -12,5 +14,8 @@ namespace WalkInStyleAPI.Models.User
         [Required]
         [EmailAddress]
         public string? UserEmail { get; set; }
+        public string? Role { get; set; }
+
+
     }
 }

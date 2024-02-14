@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WalkInStyleAPI.Models.User
+namespace WalkInStyleAPI.Models.DTOs.User
 {
     public class UserViewDto
     {

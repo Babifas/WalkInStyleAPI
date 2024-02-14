@@ -1,25 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WalkInStyleAPI.Models.Product
+namespace WalkInStyleAPI.Models
 {
     public class Product
     {
         [Key]
         public int ProductId { get; set; }
-        [Required]
         public string? ProductName { get; set; }
-        [Required]
+        public string? Image { get; set; }
         public int OrginalPrice { get; set; }
-        [Required]
         public int OfferPrice { get; set; }
-        [Required]
         public string? Description { get; set; }
-        [Required]
-        public string? CompanyName { get; set; }
-        [Required]
-        public string? Category { get; set; }
-        [Required]
+        public string? Brand { get; set; }
+        public int CategoryId { get; set; }
         public int Stock { get; set; }
+        public Category category { get; set; }
+
 
     }
 }

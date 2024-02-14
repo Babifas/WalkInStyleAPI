@@ -5,7 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WalkInStyleAPI.Models.User;
+using WalkInStyleAPI.Models;
+using WalkInStyleAPI.Models.DTOs.User;
 using WalkInStyleAPI.Services.User_Service;
 
 namespace WalkInStyleAPI.Controllers

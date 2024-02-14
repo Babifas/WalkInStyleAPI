@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using WalkInStyleAPI.Models.Product;
+using WalkInStyleAPI.Models;
+using WalkInStyleAPI.Models.DTOs.Product;
 using WalkInStyleAPI.Services;
 
 namespace WalkInStyleAPI.Controllers
@@ -35,22 +36,72 @@ namespace WalkInStyleAPI.Controllers
                 {
                     return Ok(product);
                 }
-                return NotFound("User Not Found");
+                return NotFound("Product Not Found");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPost]
-        public async Task AddProduct([FromBody] Product product)
+        [HttpGet("ProductsByCategory/{category}")]
+        public async Task<IActionResult> GetProductByCategory(string category)
         {
             try
             {
-                await _productService.AddProduct(product);
+                return Ok(await _productService.GetProductsByCategory(category));
             }catch (Exception ex)
             {
-                 BadRequest(ex.Message);
+                    return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddProduct([FromBody] ProductDto product)
+        {
+            try
+            {
+                var res=await _productService.AddProduct(product);
+                if (res)
+                {
+                    return Ok("Product added successfully");
+                }
+                return BadRequest("Product already exist");
+            }catch (Exception ex)
+            {
+                 return BadRequest(ex.Message);
+            }
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateProduct([FromBody] ProductDto product,int id)
+        {
+            try
+            {
+                var res = await _productService.UpdateProduct(product, id);
+                if (res)
+                {
+                    return Ok("Product updated successfuly");
+                }
+                return NotFound("The product not found");
+            }catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProduct([FromBody] int id)
+        {
+            try
+            {
+                var res = await _productService.DeleteProduct(id);
+                if (res)
+                {
+                    return Ok("Product deleted successfully");
+                }
+                return NotFound("The product not found");
+
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

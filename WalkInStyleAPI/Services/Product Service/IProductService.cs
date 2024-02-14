@@ -1,13 +1,17 @@
 ﻿
-using WalkInStyleAPI.Models.Product;
+using WalkInStyleAPI.Models;
+using WalkInStyleAPI.Models.DTOs.Product;
 
 namespace WalkInStyleAPI.Services
 {
     public interface IProductService
     {
 
-        Task<List<Product>> GetAllProducts();
-        Task<Product> GetProductById(int id);
-        Task AddProduct(Product product);
+        Task<List<ProductViewDto>> GetAllProducts();
+        Task<ProductViewDto> GetProductById(int id);
+        Task<List<ProductViewDto>> GetProductsByCategory(string category);
+        Task<bool> AddProduct(ProductDto product);
+        Task<bool> UpdateProduct(ProductDto product, int id);
+        Task<bool> DeleteProduct(int id);
     }
 }

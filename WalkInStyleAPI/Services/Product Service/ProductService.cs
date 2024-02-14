@@ -1,35 +1,73 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using WalkInStyleAPI.Data;
-using WalkInStyleAPI.Models.Product;
+using WalkInStyleAPI.Models;
+using WalkInStyleAPI.Models.DTOs.Product;
 
 namespace WalkInStyleAPI.Services
 {
     public class ProductService:IProductService
     {
         private readonly ApDbContext _context;
-        public ProductService(ApDbContext context) 
+        private readonly IMapper _mapper;
+        public ProductService(ApDbContext context,IMapper mapper) 
         {
            _context = context;
+           _mapper = mapper;
         }
-        public async Task<List<Product>> GetAllProducts()
+        public async Task<List<ProductViewDto>> GetAllProducts()
         {
             var products=await _context.Products.ToListAsync();
-            return products;
+            return _mapper.Map<List<ProductViewDto>>(products);
         }
-        public async Task<Product> GetProductById(int id)
+        public async Task<ProductViewDto> GetProductById(int id)
         {
             var product = await _context.Products.SingleOrDefaultAsync(p=>p.ProductId==id);
             if (product != null) 
             {
-                return product;
+                return _mapper.Map<ProductViewDto>(product);
             }
             return null;
         }
-
-        public async Task AddProduct(Product product)
+        public async Task<List<ProductViewDto>> GetProductsByCategory(string category)
         {
-           await _context.Products.AddAsync(product);
-           await _context.SaveChangesAsync();
+            var p=await _context.Products.Where(p=>p.category.Name.ToLower()==category.ToLower()).ToListAsync();
+
+            return _mapper.Map<List<ProductViewDto>>(p);
+        }
+        public async Task<bool> AddProduct(ProductDto product)
+        {
+            var isExist = await _context.Products.AnyAsync(p => p.ProductName.ToLower() == product.ProductName.ToLower());
+            if (!isExist)
+            {
+               var _product=_mapper.Map<Product>(product);
+               _context.Products.Add(_product);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+        public async Task<bool> UpdateProduct(ProductDto product,int id)
+        {
+            var _product=await _context.Products.FirstOrDefaultAsync(p=>p.ProductId==id);
+            if(_product != null)
+            {
+                _mapper.Map(product, _product);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+        public async Task<bool> DeleteProduct(int id)
+        {
+            var product=await _context.Products.FirstOrDefaultAsync(p=>p.ProductId==id);
+            if(product != null)
+            {
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
         
     }

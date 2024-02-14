@@ -6,6 +6,7 @@ using System.Text;
 using WalkInStyleAPI.Data;
 using WalkInStyleAPI.Mapper;
 using WalkInStyleAPI.Services;
+using WalkInStyleAPI.Services.Category_Service;
 using WalkInStyleAPI.Services.User_Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(ProductAutoMapper));
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddAuthentication(options =>
 {

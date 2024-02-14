@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WalkInStyleAPI.Models.User
+namespace WalkInStyleAPI.Models.DTOs.User
 {
     public class LoginDto
     {
@@ -10,6 +10,6 @@ namespace WalkInStyleAPI.Models.User
         [Required]
         [MinLength(6)]
         public string? Password { get; set; }
-        
+
     }
 }

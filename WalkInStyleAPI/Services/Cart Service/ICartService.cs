@@ -6,6 +6,8 @@ namespace WalkInStyleAPI.Services.Cart_Service
     {
         Task<bool> AddToCart(int userid, int productid);
         Task<List<CartViewDto>> GetCart(int userid);
-        Task RemoveCart(int userid, int productid);
+        Task<bool> RemoveCart(int userid, int productid);
+        Task<bool> IncrementQuantity(int userid, int productid);
+        Task<bool> DecrementQuantity(int userid, int productid);
     }
 }

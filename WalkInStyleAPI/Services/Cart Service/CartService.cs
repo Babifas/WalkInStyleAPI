@@ -71,7 +71,7 @@ namespace WalkInStyleAPI.Services.Cart_Service
             return true;
 
         }
-        public  async Task RemoveCart(int userid,int productid)
+        public  async Task<bool> RemoveCart(int userid,int productid)
         {
             var user=await  _dbContext.Users.Include(u=>u.cart)
                 .ThenInclude(u=>u.carts)
@@ -82,8 +82,66 @@ namespace WalkInStyleAPI.Services.Cart_Service
                 throw new Exception("User Id or Product Id is not valid");
             }
             var cartitem=user.cart.carts.FirstOrDefault(ci=>ci.ProductId==productid);
+            if (cartitem == null)
+            {
+                return false;
+            }
+            else
+            {
                 _dbContext.CartItems.Remove(cartitem);
                 await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            
+        }
+        public async Task<bool> IncrementQuantity(int userid,int productid)
+        {
+            var user = await _dbContext.Users.Include(u => u.cart)
+              .ThenInclude(u => u.carts)
+              .FirstOrDefaultAsync(u => u.UserId == userid);
+            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == productid);
+            if (user == null || product == null)
+            {
+                throw new Exception("User Id or Product Id is not valid");
+            }
+            var cartitem = user.cart.carts.FirstOrDefault(ci => ci.ProductId == productid);
+            if(cartitem == null)
+            {
+                return false;   
+            }
+            else
+            {
+                cartitem.Quantity += 1;
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+          
+        }
+        public async Task<bool> DecrementQuantity(int userid, int productid)
+        {
+            var user = await _dbContext.Users.Include(u => u.cart)
+                    .ThenInclude(u => u.carts)
+                    .FirstOrDefaultAsync(u => u.UserId == userid);
+            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == productid);
+            if (user == null || product == null)
+            {
+                throw new Exception("User Id or Product Id is not valid");
+            }
+            var cartitem = user.cart.carts.FirstOrDefault(ci => ci.ProductId == productid);
+            if (cartitem == null)
+            {
+                return false;
+            }
+            else
+            {
+                if(cartitem.Quantity > 1)
+                {
+                    cartitem.Quantity -= 1;
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
         }
     }
 }

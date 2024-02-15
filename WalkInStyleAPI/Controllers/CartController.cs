@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WalkInStyleAPI.Services.Cart_Service;
 
@@ -14,6 +15,7 @@ namespace WalkInStyleAPI.Controllers
             _cartService = cartService;
         }
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> UserCart(int userid)
         {
             try
@@ -26,6 +28,7 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> AddToCart(int userid,int productid)
         {
             try
@@ -44,16 +47,67 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> RemoveCart(int userid,int productid)
         {
             try
             {
-                await _cartService.RemoveCart(userid,productid);
-                return Ok("Product remvoed from successfully");
+                var res= await _cartService.RemoveCart(userid,productid);
+                if (res)
+                {
+                    return Ok("Product remvoed from successfully");
+                }
+                else
+                {
+                    return BadRequest("The product doesn't exist in cart");
+                }
             }catch(Exception e)
             {
                 return BadRequest(e.Message);
             }
         }
+        [HttpPut("IncrementQuantity")]
+        [Authorize]
+        public async Task<IActionResult> IncrementQuantity(int userid,int productid)
+        {
+            try
+            {
+                var res=await _cartService.IncrementQuantity(userid, productid);
+                if (res)
+                {
+                    return Ok("Product quantity incremented");
+                }
+                else
+                {
+                    return BadRequest("The product doesn't exist in cart");
+                }
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+        [HttpPut("DecrementQuantity")]
+        [Authorize]
+        public async Task<IActionResult> DecremntQuantity(int userid, int productid)
+        {
+            try
+            {
+                var res = await _cartService.DecrementQuantity(userid, productid);
+                if (res)
+                {
+                    return Ok("Product quantity decremented");
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
     }
 }

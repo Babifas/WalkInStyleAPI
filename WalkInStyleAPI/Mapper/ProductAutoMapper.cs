@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using WalkInStyleAPI.Models;
+using WalkInStyleAPI.Models.DTOs.Cart;
 using WalkInStyleAPI.Models.DTOs.Category;
 using WalkInStyleAPI.Models.DTOs.Product;
 using WalkInStyleAPI.Models.DTOs.User;

@@ -6,6 +6,7 @@ using System.Text;
 using WalkInStyleAPI.Data;
 using WalkInStyleAPI.Mapper;
 using WalkInStyleAPI.Services;
+using WalkInStyleAPI.Services.Cart_Service;
 using WalkInStyleAPI.Services.Category_Service;
 using WalkInStyleAPI.Services.User_Service;
 
@@ -25,6 +26,7 @@ builder.Services.AddAutoMapper(typeof(ProductAutoMapper));
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICartService,CartService>();
 
 builder.Services.AddAuthentication(options =>
 {

@@ -15,6 +15,7 @@ namespace WalkInStyleAPI.Models
         [EmailAddress]
         public string? UserEmail { get; set; }
         public string? Role { get; set; }
+        public Cart cart { get; set; }
 
 
     }

@@ -17,6 +17,8 @@ namespace WalkInStyleAPI.Data
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Whishlist> Whishlists { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
@@ -42,6 +44,22 @@ namespace WalkInStyleAPI.Data
                 .HasMany(W => W.Products)
                 .WithMany(P => P.whishlists)
                 .UsingEntity(x => x.ToTable("WhilistPrdoduct"));
+
+            modelBuilder.Entity<Whishlist>()
+                .HasOne(w => w.User)
+                .WithMany(u => u.whishlist)
+                .HasForeignKey(w => w.UserId);
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o=>o.user)
+                .WithMany(u => u.order)
+                .HasForeignKey(o => o.UserId);
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.order)
+                .WithMany(o=>o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId);
+        
 
         }
     }

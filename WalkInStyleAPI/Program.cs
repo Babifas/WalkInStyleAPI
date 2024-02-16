@@ -8,6 +8,7 @@ using WalkInStyleAPI.Mapper;
 using WalkInStyleAPI.Services;
 using WalkInStyleAPI.Services.Cart_Service;
 using WalkInStyleAPI.Services.Category_Service;
+using WalkInStyleAPI.Services.Order_Sevice;
 using WalkInStyleAPI.Services.User_Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService,CartService>();
+builder.Services.AddScoped<IOrderService,OrderService>();
+
 
 builder.Services.AddAuthentication(options =>
 {

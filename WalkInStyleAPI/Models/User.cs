@@ -17,7 +17,7 @@ namespace WalkInStyleAPI.Models
         public string? Role { get; set; }
         public Cart cart { get; set; }
         public List<Whishlist> whishlist { get; set; }
-
+        public List<Order> order { get; set; }
 
 
     }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WalkInStyleAPI.Data;
 
@@ -10,9 +11,11 @@ using WalkInStyleAPI.Data;
 namespace WalkInStyleAPI.Migrations
 {
     [DbContext(typeof(ApDbContext))]
-    partial class ApDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240216090539_migration209")]
+    partial class migration209
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

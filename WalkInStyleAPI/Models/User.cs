@@ -15,8 +15,9 @@ namespace WalkInStyleAPI.Models
         [EmailAddress]
         public string? UserEmail { get; set; }
         public string? Role { get; set; }
+        public bool isBlocked {  get; set; }
         public Cart cart { get; set; }
-        public List<Whishlist> whishlist { get; set; }
+        public List<Wishlist> wishlists { get; set; }
         public List<Order> order { get; set; }
 
 

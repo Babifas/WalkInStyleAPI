@@ -26,6 +26,7 @@ namespace WalkInStyleAPI.Services.User_Service
                 var HashPassword=BCrypt.Net.BCrypt.HashPassword(user.Password, salt);
                 _user.Password=HashPassword;
                 _user.Role = "user";
+                _user.isBlocked = false;
                 _context.Users.Add(_user);
                 await _context.SaveChangesAsync();
                 return true; 
@@ -52,11 +53,35 @@ namespace WalkInStyleAPI.Services.User_Service
         public async Task<User> Login(LoginDto user)
         {
             var IsUserExist = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == user.UserEmail);
+            if(IsUserExist.isBlocked==true)
+            {
+                throw new Exception("Sorry,Access denied");
+            }
             if (IsUserExist != null && BCrypt.Net.BCrypt.Verify(user.Password, IsUserExist.Password))
             {
                 return IsUserExist;
             }
             return null;
+        }
+        public async Task BlockUser(int userid)
+        {
+            var user=await _context.Users.FindAsync(userid);
+            if (user == null)
+            {
+                throw new Exception("User id not valid");
+            }
+            user.isBlocked=true;
+            await _context.SaveChangesAsync();
+        }
+        public async Task UnblockUser(int userid)
+        {
+            var user = await _context.Users.FindAsync(userid);
+            if (user == null)
+            {
+                throw new Exception("User id not valid");
+            }
+            user.isBlocked = false;
+            await _context.SaveChangesAsync();
         }
     }
 }

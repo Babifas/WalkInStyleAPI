@@ -64,7 +64,7 @@ namespace WalkInStyleAPI.Controllers
                 {
                     return Ok("Product added successfully");
                 }
-                return BadRequest("Product already exist");
+                return BadRequest("Category does not exist");
             }catch (Exception ex)
             {
                  return BadRequest(ex.Message);

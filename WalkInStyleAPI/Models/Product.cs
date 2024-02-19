@@ -16,7 +16,8 @@ namespace WalkInStyleAPI.Models
         public int Stock { get; set; }
         public Category category { get; set; }
         public List<CartItem> cartItems { get; set; }
-        public List<Whishlist> whishlists { get; set; }
+        //public Wishlist wishlist { get; set; }
+        //public List<Whishlist> whishlists { get; set; }
 
 
     }

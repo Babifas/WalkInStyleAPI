@@ -11,8 +11,8 @@ using WalkInStyleAPI.Data;
 namespace WalkInStyleAPI.Migrations
 {
     [DbContext(typeof(ApDbContext))]
-    [Migration("20240216090539_migration209")]
-    partial class migration209
+    [Migration("20240219122615_migration853")]
+    partial class migration853
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,21 +23,6 @@ namespace WalkInStyleAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ProductWhishlist", b =>
-                {
-                    b.Property<int>("ProductsProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("whishlistsWhishlistId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductsProductId", "whishlistsWhishlistId");
-
-                    b.HasIndex("whishlistsWhishlistId");
-
-                    b.ToTable("WhilistPrdoduct", (string)null);
-                });
 
             modelBuilder.Entity("WalkInStyleAPI.Models.Cart", b =>
                 {
@@ -216,18 +201,21 @@ namespace WalkInStyleAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("isBlocked")
+                        .HasColumnType("bit");
+
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WalkInStyleAPI.Models.Whishlist", b =>
+            modelBuilder.Entity("WalkInStyleAPI.Models.Wishlist", b =>
                 {
-                    b.Property<int>("WhishlistId")
+                    b.Property<int>("WishlistId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WhishlistId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WishlistId"));
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -235,26 +223,13 @@ namespace WalkInStyleAPI.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("WhishlistId");
+                    b.HasKey("WishlistId");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Whishlists");
-                });
-
-            modelBuilder.Entity("ProductWhishlist", b =>
-                {
-                    b.HasOne("WalkInStyleAPI.Models.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WalkInStyleAPI.Models.Whishlist", null)
-                        .WithMany()
-                        .HasForeignKey("whishlistsWhishlistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("Wishlists");
                 });
 
             modelBuilder.Entity("WalkInStyleAPI.Models.Cart", b =>
@@ -328,13 +303,21 @@ namespace WalkInStyleAPI.Migrations
                     b.Navigation("category");
                 });
 
-            modelBuilder.Entity("WalkInStyleAPI.Models.Whishlist", b =>
+            modelBuilder.Entity("WalkInStyleAPI.Models.Wishlist", b =>
                 {
+                    b.HasOne("WalkInStyleAPI.Models.Product", "Products")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("WalkInStyleAPI.Models.User", "User")
-                        .WithMany("whishlist")
+                        .WithMany("wishlists")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Products");
 
                     b.Navigation("User");
                 });
@@ -366,7 +349,7 @@ namespace WalkInStyleAPI.Migrations
 
                     b.Navigation("order");
 
-                    b.Navigation("whishlist");
+                    b.Navigation("wishlists");
                 });
 #pragma warning restore 612, 618
         }

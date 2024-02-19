@@ -8,7 +8,7 @@ using WalkInStyleAPI.Models.DTOs.Order;
 
 namespace WalkInStyleAPI.Services.Order_Sevice
 {
-    public class OrderService:IOrderService
+    public class OrderService : IOrderService
     {
         private readonly ApDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -19,10 +19,10 @@ namespace WalkInStyleAPI.Services.Order_Sevice
         }
         public async Task<bool> AddNewOrder(int userid)
         {
-            var user=await _dbContext.Users.Include(u=>u.cart)
-                .ThenInclude(u=>u.carts)
-                .ThenInclude(u=>u.Product)
-                .FirstOrDefaultAsync(u=>u.UserId==userid);
+            var user = await _dbContext.Users.Include(u => u.cart)
+                .ThenInclude(u => u.carts)
+                .ThenInclude(u => u.Product)
+                .FirstOrDefaultAsync(u => u.UserId == userid);
             if (user == null)
             {
                 throw new Exception("User id not valid");
@@ -30,33 +30,35 @@ namespace WalkInStyleAPI.Services.Order_Sevice
             Order order = new Order
             {
                 UserId = userid
-               
+
             };
             await _dbContext.Orders.AddAsync(order);
             await _dbContext.SaveChangesAsync();
-            
+
             var cartitems = user.cart?.carts.Select(x => new OrderItem
             {
                 OrderId = order.OrderId,
                 ProductId = x.ProductId,
                 OrderStatus = "pending",
                 Quantity = x.Quantity,
-                TotalPrice = x.Product.OfferPrice*x.Quantity,
+                TotalPrice = x.Product.OfferPrice * x.Quantity,
             });
             if (cartitems == null)
             {
                 return false;
             }
+
             foreach (var item in cartitems)
             {
                 await _dbContext.OrderItems.AddAsync(item);
             }
-            await _dbContext.SaveChangesAsync();  
+            _dbContext.Carts.Remove(user.cart);
+            await _dbContext.SaveChangesAsync();
             return true;
         }
         public async Task<List<OrderViewUser>> OrderDetails(int userid)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u=>u.UserId==userid);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == userid);
             if (user == null)
             {
                 throw new Exception("User id not valid");
@@ -68,15 +70,23 @@ namespace WalkInStyleAPI.Services.Order_Sevice
             {
                 return new List<OrderViewUser>();
             }
-            var orderitems = order.OrderItems.Select(oi=>new OrderViewUser
+            var orderitems = order.OrderItems.Select(oi => new OrderViewUser
             {
-                ProductName=oi.product.ProductName,
-                ProductImage=oi.product.Image,
-                Quantity=oi.Quantity,
-                TotalPrice=oi.TotalPrice,
+                ProductName = oi.product.ProductName,
+                ProductImage = oi.product.Image,
+                Quantity = oi.Quantity,
+                TotalPrice = oi.TotalPrice,
             }).ToList();
             return orderitems;
-               
+
         }
+        //public async Task<List<OrdersViewAdmin>> AllOrders()
+        //{
+        //    var orders = await _dbContext.Orders.Include(o => o.OrderItems).ThenInclude(OI => OI.product).ToListAsync();
+
+        //    var order = orders.Select(o => o.OrderItems);
+
+
+        //}
     }
 }

@@ -84,9 +84,38 @@ namespace WalkInStyleAPI.Controllers
                 return NotFound("Incorrect email or password");
             }catch(Exception ex)
             {
-                return BadRequest($"Could not login {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
+        [HttpPut("BlockUser")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> BlockUser(int id)
+        {
+            try
+            {
+                await _userService.BlockUser(id);
+                return Ok("User blocked successfuly");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPut("UnblockUser")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UnblockUser(int id)
+        {
+            try
+            {
+                await _userService.UnblockUser(id);
+                return Ok("User unblocked successfuly");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         private string GenerateJwtToken(User user)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

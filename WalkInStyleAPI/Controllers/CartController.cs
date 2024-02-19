@@ -28,7 +28,7 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> AddToCart(int userid,int productid)
         {
             try

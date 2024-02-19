@@ -2,13 +2,13 @@
 
 namespace WalkInStyleAPI.Models
 {
-    public class Whishlist
+    public class Wishlist
     {
         [Key]
-        public int WhishlistId { get; set; }
+        public int WishlistId { get; set; }
         public int UserId {  get; set; }
         public int ProductId {  get; set; }
         public User User { get; set; }
-        public List<Product> Products { get; set;}
+        public Product Products { get; set;}
     }
 }

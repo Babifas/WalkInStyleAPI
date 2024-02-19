@@ -11,8 +11,8 @@ using WalkInStyleAPI.Data;
 namespace WalkInStyleAPI.Migrations
 {
     [DbContext(typeof(ApDbContext))]
-    [Migration("20240215150159_migration205")]
-    partial class migration205
+    [Migration("20240219110618_migration852")]
+    partial class migration852
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,21 +23,6 @@ namespace WalkInStyleAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ProductWhishlist", b =>
-                {
-                    b.Property<int>("ProductsProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("whishlistsWhishlistId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductsProductId", "whishlistsWhishlistId");
-
-                    b.HasIndex("whishlistsWhishlistId");
-
-                    b.ToTable("WhilistPrdoduct", (string)null);
-                });
 
             modelBuilder.Entity("WalkInStyleAPI.Models.Cart", b =>
                 {
@@ -101,6 +86,57 @@ namespace WalkInStyleAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("WalkInStyleAPI.Models.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("WalkInStyleAPI.Models.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("WalkInStyleAPI.Models.Product", b =>
@@ -170,13 +206,13 @@ namespace WalkInStyleAPI.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WalkInStyleAPI.Models.Whishlist", b =>
+            modelBuilder.Entity("WalkInStyleAPI.Models.Wishlist", b =>
                 {
-                    b.Property<int>("WhishlistId")
+                    b.Property<int>("WishlistId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WhishlistId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WishlistId"));
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -184,26 +220,13 @@ namespace WalkInStyleAPI.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("WhishlistId");
+                    b.HasKey("WishlistId");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Whishlists");
-                });
-
-            modelBuilder.Entity("ProductWhishlist", b =>
-                {
-                    b.HasOne("WalkInStyleAPI.Models.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WalkInStyleAPI.Models.Whishlist", null)
-                        .WithMany()
-                        .HasForeignKey("whishlistsWhishlistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("Wishlists");
                 });
 
             modelBuilder.Entity("WalkInStyleAPI.Models.Cart", b =>
@@ -236,6 +259,36 @@ namespace WalkInStyleAPI.Migrations
                     b.Navigation("cart");
                 });
 
+            modelBuilder.Entity("WalkInStyleAPI.Models.Order", b =>
+                {
+                    b.HasOne("WalkInStyleAPI.Models.User", "user")
+                        .WithMany("order")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("WalkInStyleAPI.Models.OrderItem", b =>
+                {
+                    b.HasOne("WalkInStyleAPI.Models.Order", "order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WalkInStyleAPI.Models.Product", "product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("order");
+
+                    b.Navigation("product");
+                });
+
             modelBuilder.Entity("WalkInStyleAPI.Models.Product", b =>
                 {
                     b.HasOne("WalkInStyleAPI.Models.Category", "category")
@@ -247,13 +300,21 @@ namespace WalkInStyleAPI.Migrations
                     b.Navigation("category");
                 });
 
-            modelBuilder.Entity("WalkInStyleAPI.Models.Whishlist", b =>
+            modelBuilder.Entity("WalkInStyleAPI.Models.Wishlist", b =>
                 {
+                    b.HasOne("WalkInStyleAPI.Models.Product", "Products")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("WalkInStyleAPI.Models.User", "User")
-                        .WithMany("whishlist")
+                        .WithMany("wishlists")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Products");
 
                     b.Navigation("User");
                 });
@@ -268,6 +329,11 @@ namespace WalkInStyleAPI.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("WalkInStyleAPI.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
+                });
+
             modelBuilder.Entity("WalkInStyleAPI.Models.Product", b =>
                 {
                     b.Navigation("cartItems");
@@ -278,7 +344,9 @@ namespace WalkInStyleAPI.Migrations
                     b.Navigation("cart")
                         .IsRequired();
 
-                    b.Navigation("whishlist");
+                    b.Navigation("order");
+
+                    b.Navigation("wishlists");
                 });
 #pragma warning restore 612, 618
         }

@@ -9,5 +9,7 @@ namespace WalkInStyleAPI.Services.User_Service
         Task<List<UserViewDto>> GetAllUsers();
         Task<UserViewDto> GetUserById(int id);
         Task<User> Login(LoginDto user);
+        Task BlockUser(int userid);
+        Task UnblockUser(int userid);
     }
 }

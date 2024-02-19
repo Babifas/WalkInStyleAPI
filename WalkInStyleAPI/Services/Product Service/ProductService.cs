@@ -38,7 +38,13 @@ namespace WalkInStyleAPI.Services
         public async Task<bool> AddProduct(ProductDto product)
         {
             var isExist = await _context.Products.AnyAsync(p => p.ProductName.ToLower() == product.ProductName.ToLower());
-            if (!isExist)
+            if (isExist)
+            {
+                throw new Exception("This product already exist");
+            }
+            var categoryExist = await _context.Categories.FirstOrDefaultAsync(c => c.Id == product.CategoryId);
+
+            if (categoryExist!=null)
             {
                var _product=_mapper.Map<Product>(product);
                _context.Products.Add(_product);

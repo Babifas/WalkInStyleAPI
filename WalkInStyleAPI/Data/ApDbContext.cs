@@ -16,7 +16,7 @@ namespace WalkInStyleAPI.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
-        public DbSet<Whishlist> Whishlists { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,14 +40,19 @@ namespace WalkInStyleAPI.Data
                 .WithMany(p => p.cartItems)
                 .HasForeignKey(ci => ci.ProductId);
 
-            modelBuilder.Entity<Whishlist>()
-                .HasMany(W => W.Products)
-                .WithMany(P => P.whishlists)
-                .UsingEntity(x => x.ToTable("WhilistPrdoduct"));
+            //modelBuilder.Entity<Whishlist>()
+            //    .HasMany(W => W.Products)
+            //    .WithMany(P => P.whishlists)
+            //    .UsingEntity(x => x.ToTable("WhilistPrdoduct"));
 
-            modelBuilder.Entity<Whishlist>()
+            modelBuilder.Entity<Wishlist>()
+               .HasOne(w => w.Products)
+               .WithMany()
+               .HasForeignKey(p => p.ProductId);
+
+            modelBuilder.Entity<Wishlist>()
                 .HasOne(w => w.User)
-                .WithMany(u => u.whishlist)
+                .WithMany(u => u.wishlists)
                 .HasForeignKey(w => w.UserId);
 
             modelBuilder.Entity<Order>()

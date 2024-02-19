@@ -10,6 +10,7 @@ using WalkInStyleAPI.Services.Cart_Service;
 using WalkInStyleAPI.Services.Category_Service;
 using WalkInStyleAPI.Services.Order_Sevice;
 using WalkInStyleAPI.Services.User_Service;
+using WalkInStyleAPI.Services.Whishlist_Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +30,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService,CartService>();
 builder.Services.AddScoped<IOrderService,OrderService>();
-
+builder.Services.AddScoped<IWishlistService, WishlistService>();
 
 builder.Services.AddAuthentication(options =>
 {

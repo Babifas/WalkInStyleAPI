@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using System.ComponentModel;
 using WalkInStyleAPI.Data;
+using WalkInStyleAPI.JWTVerification;
 using WalkInStyleAPI.Models;
 using WalkInStyleAPI.Models.DTOs.Order;
 
@@ -12,15 +13,18 @@ namespace WalkInStyleAPI.Services.Order_Sevice
     {
         private readonly ApDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly IJWTService _jWTService;
         private readonly string HostUrl;
-        public OrderService(ApDbContext dbContext, IMapper mapper,IConfiguration configuration)
+        public OrderService(ApDbContext dbContext, IMapper mapper,IConfiguration configuration,IJWTService jWTService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _jWTService= jWTService;
             HostUrl = configuration["HostUrl:Url"];
         }
-        public async Task<bool> AddNewOrder(int userid)
+        public async Task<bool> AddNewOrder(string token)
         {
+            int userid = _jWTService.GetUserIdFromToken(token);
             var user = await _dbContext.Users.Include(u => u.cart)
                 .ThenInclude(u => u.carts)
                 .ThenInclude(u => u.Product)
@@ -58,8 +62,9 @@ namespace WalkInStyleAPI.Services.Order_Sevice
             await _dbContext.SaveChangesAsync();
             return true;
         }
-        public async Task<List<OrderViewUser>> OrderDetails(int userid)
+        public async Task<List<OrderViewUser>> OrderDetails(string token)
         {
+            int userid = _jWTService.GetUserIdFromToken(token);
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == userid);
             if (user == null)
             {

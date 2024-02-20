@@ -27,6 +27,7 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
             try

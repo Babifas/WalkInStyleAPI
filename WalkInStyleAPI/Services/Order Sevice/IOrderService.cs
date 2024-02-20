@@ -4,8 +4,8 @@ namespace WalkInStyleAPI.Services.Order_Sevice
 {
     public interface IOrderService
     {
-        Task<bool> AddNewOrder(int userid);
-        Task<List<OrderViewUser>> OrderDetails(int userid);
+        Task<bool> AddNewOrder(string token);
+        Task<List<OrderViewUser>> OrderDetails(string token);
         Task<decimal> TotalRevanue();
         Task<int> TotalProductsPurchased();
     }

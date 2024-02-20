@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using WalkInStyleAPI.Data;
+using WalkInStyleAPI.JWTVerification;
 using WalkInStyleAPI.Models;
 using WalkInStyleAPI.Models.DTOs.Wishlist;
 
@@ -9,14 +10,17 @@ namespace WalkInStyleAPI.Services.Whishlist_Service
     public class WishlistService:IWishlistService
     {
         private readonly ApDbContext _dbContext;
+        private readonly IJWTService _jWTService;
         private readonly string HostUrl;
-        public WishlistService(ApDbContext dbContext,IConfiguration configuration)
+        public WishlistService(ApDbContext dbContext,IConfiguration configuration,IJWTService jWTService)
         {
             _dbContext = dbContext;
+            _jWTService= jWTService;
             HostUrl = configuration["HostUrl:Url"];
         }
-        public async Task<bool> AddToWishlist(int userid,int productid)
+        public async Task<bool> AddToWishlist(string token, int productid)
         {
+            int userid = _jWTService.GetUserIdFromToken(token);
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == userid);
             var product=await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == productid);
             if (user == null||product==null)
@@ -38,8 +42,9 @@ namespace WalkInStyleAPI.Services.Whishlist_Service
             }
             return false; 
         }
-        public async Task<bool> RemoveWishlist(int userid,int productid)
+        public async Task<bool> RemoveWishlist(string token, int productid)
         {
+            int userid = _jWTService.GetUserIdFromToken(token);
             var user = await _dbContext.Users.Include(u=>u.wishlists).FirstOrDefaultAsync(u => u.UserId == userid);
             var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.ProductId == productid);
             if (user == null || product == null)
@@ -55,8 +60,9 @@ namespace WalkInStyleAPI.Services.Whishlist_Service
             await _dbContext.SaveChangesAsync();
             return true;
         }
-        public async Task<List<WishListViewDto>> GetWishlist(int userid)
+        public async Task<List<WishListViewDto>> GetWishlist(string token)
         {
+            int userid = _jWTService.GetUserIdFromToken(token);
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == userid);
             if (user == null)
             {

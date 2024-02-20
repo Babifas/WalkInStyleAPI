@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WalkInStyleAPI.Services.Order_Sevice;
 
@@ -14,11 +15,15 @@ namespace WalkInStyleAPI.Controllers
              _orderService = orderService;
         }
         [HttpPost]
-        public async Task<IActionResult> AddNewOrder(int userid)
+        [Authorize]
+        public async Task<IActionResult> AddNewOrder()
         {
             try
             {
-                var res=await _orderService.AddNewOrder(userid);
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                var splitToken = token.Split(' ');
+                var jwtToken = splitToken[1];
+                var res=await _orderService.AddNewOrder(jwtToken);
                 if (res)
                 {
                     return Ok("Ordered successfully");
@@ -33,11 +38,15 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> OrderDetails(int userid)
+        [Authorize]
+        public async Task<IActionResult> OrderDetails()
         {
             try
             {
-                return Ok(await _orderService.OrderDetails(userid));
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                var splitToken = token.Split(' ');
+                var jwtToken = splitToken[1];
+                return Ok(await _orderService.OrderDetails(jwtToken));
 
             }catch (Exception ex)
             {
@@ -45,6 +54,7 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpGet("TotalRevanue")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> TotalRevanue()
         {
             try
@@ -58,6 +68,7 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpGet("TotalProductsPurchased")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> TotalProductsPurchased()
         {
             try

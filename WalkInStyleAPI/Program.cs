@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WalkInStyleAPI.Data;
+using WalkInStyleAPI.JWTVerification;
 using WalkInStyleAPI.Mapper;
 using WalkInStyleAPI.Services;
 using WalkInStyleAPI.Services.Cart_Service;
@@ -31,6 +32,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService,CartService>();
 builder.Services.AddScoped<IOrderService,OrderService>();
 builder.Services.AddScoped<IWishlistService, WishlistService>();
+builder.Services.AddScoped<IJWTService,JWTService>();
 
 builder.Services.AddAuthentication(options =>
 {

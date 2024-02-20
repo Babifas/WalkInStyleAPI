@@ -16,11 +16,14 @@ namespace WalkInStyleAPI.Controllers
         }
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> UserCart(int userid)
+        public async Task<IActionResult> UserCart()
         {
             try
             {
-                return Ok(await _cartService.GetCart(userid));
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                var splitToken = token.Split(' ');
+                var jwtToken = splitToken[1];
+                return Ok(await _cartService.GetCart(jwtToken));
             }
             catch (Exception ex)
             {
@@ -28,12 +31,15 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpPost]
-        //[Authorize]
-        public async Task<IActionResult> AddToCart(int userid,int productid)
+        [Authorize]
+        public async Task<IActionResult> AddToCart(int productid)
         {
             try
             {
-                var res=await _cartService.AddToCart(userid, productid);
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                var splitToken = token.Split(' ');
+                var jwtToken = splitToken[1];
+                var res=await _cartService.AddToCart(jwtToken, productid);
                 if (res)
                 {
                     return Ok("Product added successfuly");
@@ -48,11 +54,14 @@ namespace WalkInStyleAPI.Controllers
         }
         [HttpDelete]
         [Authorize]
-        public async Task<IActionResult> RemoveCart(int userid,int productid)
+        public async Task<IActionResult> RemoveCart(int productid)
         {
             try
             {
-                var res= await _cartService.RemoveCart(userid,productid);
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                var splitToken = token.Split(' ');
+                var jwtToken = splitToken[1];
+                var res= await _cartService.RemoveCart(jwtToken,productid);
                 if (res)
                 {
                     return Ok("Product remvoed from successfully");
@@ -68,11 +77,14 @@ namespace WalkInStyleAPI.Controllers
         }
         [HttpPut("IncrementQuantity")]
         [Authorize]
-        public async Task<IActionResult> IncrementQuantity(int userid,int productid)
+        public async Task<IActionResult> IncrementQuantity(int productid)
         {
             try
             {
-                var res=await _cartService.IncrementQuantity(userid, productid);
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                var splitToken = token.Split(' ');
+                var jwtToken = splitToken[1];
+                var res=await _cartService.IncrementQuantity(jwtToken, productid);
                 if (res)
                 {
                     return Ok("Product quantity incremented");
@@ -89,11 +101,14 @@ namespace WalkInStyleAPI.Controllers
         }
         [HttpPut("DecrementQuantity")]
         [Authorize]
-        public async Task<IActionResult> DecremntQuantity(int userid, int productid)
+        public async Task<IActionResult> DecremntQuantity( int productid)
         {
             try
             {
-                var res = await _cartService.DecrementQuantity(userid, productid);
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                var splitToken = token.Split(' ');
+                var jwtToken = splitToken[1];
+                var res = await _cartService.DecrementQuantity(jwtToken, productid);
                 if (res)
                 {
                     return Ok("Product quantity decremented");
@@ -108,6 +123,6 @@ namespace WalkInStyleAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
-
+       
     }
 }

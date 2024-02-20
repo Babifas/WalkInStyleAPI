@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WalkInStyleAPI.Models;
 using WalkInStyleAPI.Models.DTOs.Product;
@@ -67,6 +68,7 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> AddProduct([FromForm]ProductDto product,IFormFile image)
         {
             try
@@ -83,6 +85,7 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductDto product, IFormFile image)
         {
             try
@@ -99,6 +102,7 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct([FromBody] int id)
         {
             try

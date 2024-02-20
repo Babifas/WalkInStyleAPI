@@ -2,6 +2,6 @@
 {
     public interface IJWTService
     {
-        public void CheckUser(string token);
+        int GetUserIdFromToken(string token);
     }
 }

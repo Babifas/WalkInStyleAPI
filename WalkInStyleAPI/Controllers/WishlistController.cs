@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WalkInStyleAPI.Services.Whishlist_Service;
 
@@ -14,22 +15,30 @@ namespace WalkInStyleAPI.Controllers
             _wishlistService = wishlistService;
         }
         [HttpGet]
-        public async Task<IActionResult> GetWishlist(int userid)
+        [Authorize]
+        public async Task<IActionResult> GetWishlist()
         {
             try
             {
-                return Ok(await _wishlistService.GetWishlist(userid));
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                var splitToken = token.Split(' ');
+                var jwtToken = splitToken[1];
+                return Ok(await _wishlistService.GetWishlist(jwtToken));
             }catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
         [HttpPost]
-        public async Task<IActionResult> AddToWishlist(int userid,int productid)
+        [Authorize]
+        public async Task<IActionResult> AddToWishlist(int productid)
         {
             try
             {
-               var res=await _wishlistService.AddToWishlist(userid, productid);
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                var splitToken = token.Split(' ');
+                var jwtToken = splitToken[1];
+                var res=await _wishlistService.AddToWishlist(jwtToken, productid);
                 if (res)
                 {
                     return Ok("Product added to wishlist");
@@ -42,11 +51,15 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpDelete]
-        public async Task<IActionResult> RemoveWishlist(int userid,int productid)
+        [Authorize]
+        public async Task<IActionResult> RemoveWishlist(int productid)
         {
             try
             {
-                var res = await _wishlistService.RemoveWishlist(userid, productid);
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                var splitToken = token.Split(' ');
+                var jwtToken = splitToken[1];
+                var res = await _wishlistService.RemoveWishlist(jwtToken, productid);
                 if (res)
                 {
                     return Ok("Product removed from wishlist");

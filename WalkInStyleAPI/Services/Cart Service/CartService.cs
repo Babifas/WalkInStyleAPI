@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using WalkInStyleAPI.Data;
+using WalkInStyleAPI.JWTVerification;
 using WalkInStyleAPI.Models;
 using WalkInStyleAPI.Models.DTOs.Cart;
 
@@ -9,15 +10,18 @@ namespace WalkInStyleAPI.Services.Cart_Service
     public class CartService:ICartService
     {
         private readonly ApDbContext _dbContext;
-        private readonly IMapper _mapper;
-        public CartService(ApDbContext dbContext, IMapper mapper)
+        private readonly IJWTService _jWTService;
+        private readonly string HostUrl;
+        public CartService(ApDbContext dbContext,IConfiguration configuration,IJWTService jWTService )
         {
             _dbContext = dbContext;
-            _mapper = mapper;
+            _jWTService = jWTService;
+            HostUrl = configuration["HostUrl:Url"];
         }
         public async Task<List<CartViewDto>> GetCart(int userid)
         {
-            var cart = await _dbContext.Carts.Include(c => c.carts).ThenInclude(c=>c.Product).FirstOrDefaultAsync(c => c.UserId == userid);
+            var cart = await _dbContext.Carts.Include(c => c.carts)
+                .ThenInclude(c=>c.Product).FirstOrDefaultAsync(c => c.UserId == userid);
             if (cart == null)
             {
                 return new List<CartViewDto>();
@@ -26,7 +30,7 @@ namespace WalkInStyleAPI.Services.Cart_Service
               {
                   ProductId = c.ProductId,
                   ProductName=c.Product.ProductName,
-                  Image=c.Product.Image,
+                  Image=HostUrl+c.Product.Image,
                   Price=c.Product.OfferPrice,
                   Quantity=c.Quantity,
                   TotalPrice=c.Product.OfferPrice*c.Quantity
@@ -36,7 +40,8 @@ namespace WalkInStyleAPI.Services.Cart_Service
         }
         public async Task<bool> AddToCart(int userid, int productid)
         {
-            var user = await _dbContext.Users.Include(c=>c.cart).ThenInclude(c=>c.carts).FirstOrDefaultAsync(u => u.UserId == userid);
+            var user = await _dbContext.Users.Include(c=>c.cart)
+                .ThenInclude(c=>c.carts).FirstOrDefaultAsync(u => u.UserId == userid);
             var productExist = await _dbContext.Products.FirstOrDefaultAsync(u => u.ProductId == productid);
             if (user == null || productExist == null)
             {
@@ -142,6 +147,10 @@ namespace WalkInStyleAPI.Services.Cart_Service
                 }
                 return false;
             }
+        }
+        public async Task CheckToken(string token)
+        {
+            sdf
         }
     }
 }

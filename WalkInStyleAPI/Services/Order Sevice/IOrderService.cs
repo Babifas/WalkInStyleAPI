@@ -6,5 +6,7 @@ namespace WalkInStyleAPI.Services.Order_Sevice
     {
         Task<bool> AddNewOrder(int userid);
         Task<List<OrderViewUser>> OrderDetails(int userid);
+        Task<decimal> TotalRevanue();
+        Task<int> TotalProductsPurchased();
     }
 }

@@ -54,12 +54,24 @@ namespace WalkInStyleAPI.Controllers
                     return BadRequest(ex.Message);
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> AddProduct([FromBody] ProductDto product)
+        [HttpGet("ProductsByPage")]
+        public async Task<IActionResult> ProductsByPaginated(int pageNumber,int pageSize)
         {
             try
             {
-                var res=await _productService.AddProduct(product);
+                return Ok(await _productService.GetProductsPaginated(pageNumber, pageSize));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddProduct([FromForm]ProductDto product,IFormFile image)
+        {
+            try
+            {
+                var res=await _productService.AddProduct(product,image);
                 if (res)
                 {
                     return Ok("Product added successfully");
@@ -71,11 +83,11 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateProduct([FromBody] ProductDto product,int id)
+        public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductDto product, IFormFile image)
         {
             try
             {
-                var res = await _productService.UpdateProduct(product, id);
+                var res = await _productService.UpdateProduct(id,product,image);
                 if (res)
                 {
                     return Ok("Product updated successfuly");
@@ -100,6 +112,19 @@ namespace WalkInStyleAPI.Controllers
 
             }
             catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpGet("SearchProduct")]
+        public async Task<IActionResult> SearchProduct(string product)
+        {
+            try
+            {
+                return Ok(await _productService.SearchProduct(product));
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

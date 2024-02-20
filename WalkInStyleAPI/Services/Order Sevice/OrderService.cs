@@ -12,10 +12,12 @@ namespace WalkInStyleAPI.Services.Order_Sevice
     {
         private readonly ApDbContext _dbContext;
         private readonly IMapper _mapper;
-        public OrderService(ApDbContext dbContext, IMapper mapper)
+        private readonly string HostUrl;
+        public OrderService(ApDbContext dbContext, IMapper mapper,IConfiguration configuration)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            HostUrl = configuration["HostUrl:Url"];
         }
         public async Task<bool> AddNewOrder(int userid)
         {
@@ -73,7 +75,7 @@ namespace WalkInStyleAPI.Services.Order_Sevice
             var orderitems = order.OrderItems.Select(oi => new OrderViewUser
             {
                 ProductName = oi.product.ProductName,
-                ProductImage = oi.product.Image,
+                ProductImage =HostUrl+oi.product.Image,
                 Quantity = oi.Quantity,
                 TotalPrice = oi.TotalPrice,
             }).ToList();
@@ -88,5 +90,16 @@ namespace WalkInStyleAPI.Services.Order_Sevice
 
 
         //}
+        public async Task<decimal> TotalRevanue()
+        {
+            decimal total = await _dbContext.OrderItems.SumAsync(x => x.TotalPrice);
+            return total;
+        }
+        public async Task<int> TotalProductsPurchased()
+        {
+            int total=await _dbContext.OrderItems.SumAsync(x=>x.Quantity);
+            return total;
+        }
+
     }
 }

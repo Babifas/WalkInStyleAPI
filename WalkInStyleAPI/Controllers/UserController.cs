@@ -78,7 +78,7 @@ namespace WalkInStyleAPI.Controllers
                 if (_user!=null)
                 {
                     string token = GenerateJwtToken(_user);
-
+                    
                     return Ok(new {id=_user.UserId,token=token});  
                 }
                 return NotFound("Incorrect email or password");

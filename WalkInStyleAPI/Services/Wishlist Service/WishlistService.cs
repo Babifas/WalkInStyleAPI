@@ -9,9 +9,11 @@ namespace WalkInStyleAPI.Services.Whishlist_Service
     public class WishlistService:IWishlistService
     {
         private readonly ApDbContext _dbContext;
-        public WishlistService(ApDbContext dbContext)
+        private readonly string HostUrl;
+        public WishlistService(ApDbContext dbContext,IConfiguration configuration)
         {
             _dbContext = dbContext;
+            HostUrl = configuration["HostUrl:Url"];
         }
         public async Task<bool> AddToWishlist(int userid,int productid)
         {
@@ -72,7 +74,7 @@ namespace WalkInStyleAPI.Services.Whishlist_Service
                 wishlistId = w.WishlistId,
                 productName = w.Products.ProductName,
                 Description=w.Products.Description,
-                ProductImage=w.Products.Image,
+                ProductImage=HostUrl + w.Products.Image,
                 Price=w.Products.OfferPrice
             }).ToList();
             return wishlist;

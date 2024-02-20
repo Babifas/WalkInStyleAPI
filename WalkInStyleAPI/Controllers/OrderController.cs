@@ -44,5 +44,31 @@ namespace WalkInStyleAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("TotalRevanue")]
+        public async Task<IActionResult> TotalRevanue()
+        {
+            try
+            {
+                var res = await _orderService.TotalRevanue();
+                return Ok($"Total revanue is {res}");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("TotalProductsPurchased")]
+        public async Task<IActionResult> TotalProductsPurchased()
+        {
+            try
+            {
+                var res = await _orderService.TotalProductsPurchased();
+                return Ok($"Total {res} products purchased  ");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

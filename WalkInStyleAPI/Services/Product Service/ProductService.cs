@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WalkInStyleAPI.Data;
 using WalkInStyleAPI.Models;
@@ -10,14 +11,19 @@ namespace WalkInStyleAPI.Services
     {
         private readonly ApDbContext _context;
         private readonly IMapper _mapper;
-        public ProductService(ApDbContext context,IMapper mapper) 
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly string HostUrl;
+        public ProductService(ApDbContext context,IMapper mapper,IWebHostEnvironment webHostEnvironment,IConfiguration configuration) 
         {
            _context = context;
            _mapper = mapper;
+           _webHostEnvironment = webHostEnvironment;
+           HostUrl= configuration["HostUrl:Url"];
         }
         public async Task<List<ProductViewDto>> GetAllProducts()
         {
             var products=await _context.Products.ToListAsync();
+            products.Select(p => p.Image = HostUrl + p.Image).ToList();
             return _mapper.Map<List<ProductViewDto>>(products);
         }
         public async Task<ProductViewDto> GetProductById(int id)
@@ -25,18 +31,40 @@ namespace WalkInStyleAPI.Services
             var product = await _context.Products.SingleOrDefaultAsync(p=>p.ProductId==id);
             if (product != null) 
             {
+                product.Image = HostUrl + product.Image;
                 return _mapper.Map<ProductViewDto>(product);
             }
             return null;
         }
+
         public async Task<List<ProductViewDto>> GetProductsByCategory(string category)
         {
-            var p=await _context.Products.Where(p=>p.category.Name.ToLower()==category.ToLower()).ToListAsync();
-
-            return _mapper.Map<List<ProductViewDto>>(p);
+            var products=await _context.Products.Where(p=>p.category.Name.ToLower()==category.ToLower()).ToListAsync();
+            products.Select(p=>p.Image = HostUrl + p.Image).ToList();
+            return _mapper.Map<List<ProductViewDto>>(products);
         }
-        public async Task<bool> AddProduct(ProductDto product)
+
+        public async Task<bool> AddProduct(ProductDto product,IFormFile image)
         {
+            string productImage = null;
+
+            if (image != null)
+            {
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads", "Product", fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+                }
+
+                productImage = "/Uploads/Product/" + fileName;
+            }
+            else
+            {
+                productImage = "/Uploads/common/shoe.png";
+            }
+
             var isExist = await _context.Products.AnyAsync(p => p.ProductName.ToLower() == product.ProductName.ToLower());
             if (isExist)
             {
@@ -47,18 +75,42 @@ namespace WalkInStyleAPI.Services
             if (categoryExist!=null)
             {
                var _product=_mapper.Map<Product>(product);
+               _product.Image=productImage;
                _context.Products.Add(_product);
-                await _context.SaveChangesAsync();
-                return true;
+               await _context.SaveChangesAsync();
+               return true;
             }
             return false;
         }
-        public async Task<bool> UpdateProduct(ProductDto product,int id)
+
+        public async Task<bool> UpdateProduct(int id, [FromForm] ProductDto product, IFormFile image)
         {
             var _product=await _context.Products.FirstOrDefaultAsync(p=>p.ProductId==id);
             if(_product != null)
             {
-                _mapper.Map(product, _product);
+                _product.ProductName=product.ProductName;
+                _product.OrginalPrice=product.OrginalPrice;
+                _product.OfferPrice=product.OfferPrice;
+                _product.Description=product.Description;
+                _product.CategoryId=product.CategoryId;
+                _product.Brand=product.Brand;
+                _product.Stock = product.Stock;
+                if (image != null )
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+                    string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "Uploads", "Product", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await image.CopyToAsync(stream);
+                    }
+
+                    _product.Image = "/Uploads/Product/" + fileName;
+                }
+                else
+                {
+                    _product.Image=_product.Image;
+                }
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -75,6 +127,19 @@ namespace WalkInStyleAPI.Services
             }
             return false;
         }
+        public async Task<List<ProductViewDto>> GetProductsPaginated(int PageNumber,int PageSize)
+        {
+            var products=await _context.Products.Skip((PageNumber-1)*PageSize).Take(PageSize).ToListAsync();
+            products.Select(p => p.Image = HostUrl + p.Image).ToList();
+            return _mapper.Map<List<ProductViewDto>>(products);
+        }
+        public async Task<List<ProductViewDto>> SearchProduct(string product)
+        {
+            var products= await _context.Products.Where(p => p.ProductName.Contains(product)).ToListAsync();
+            products.Select(p => p.Image = HostUrl + p.Image).ToList();
+            return _mapper.Map<List<ProductViewDto>>(products);
+        }
         
     }
 }
+

@@ -128,7 +128,7 @@ namespace WalkInStyleAPI.Controllers
             new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
             new Claim(ClaimTypes.Role, user.Role),
             // Add additional claims as needed
-        };
+            };
 
             var token = new JwtSecurityToken(
                 //issuer: _configuration["Jwt:Issuer"],

@@ -68,7 +68,7 @@ namespace WalkInStyleAPI.Controllers
             }
         }
         [HttpPost]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddProduct([FromForm]ProductDto product,IFormFile image)
         {
             try

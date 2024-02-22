@@ -87,14 +87,7 @@ namespace WalkInStyleAPI.Services.Order_Sevice
             return orderitems;
 
         }
-        //public async Task<List<OrdersViewAdmin>> AllOrders()
-        //{
-        //    var orders = await _dbContext.Orders.Include(o => o.OrderItems).ThenInclude(OI => OI.product).ToListAsync();
 
-        //    var order = orders.Select(o => o.OrderItems);
-
-
-        //}
         public async Task<decimal> TotalRevanue()
         {
             decimal total = await _dbContext.OrderItems.SumAsync(x => x.TotalPrice);

@@ -9,6 +9,7 @@ namespace WalkInStyleAPI.Services
 {
     public class ProductService:IProductService
     {
+       
         private readonly ApDbContext _context;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;

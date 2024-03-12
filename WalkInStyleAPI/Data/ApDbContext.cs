@@ -56,7 +56,7 @@ namespace WalkInStyleAPI.Data
                 .HasForeignKey(w => w.UserId);
 
             modelBuilder.Entity<Order>()
-                .HasOne(o=>o.user)
+                .HasOne(o => o.user)
                 .WithMany(u => u.order)
                 .HasForeignKey(o => o.UserId);
 
@@ -69,3 +69,6 @@ namespace WalkInStyleAPI.Data
         }
     }
 }
+
+
+

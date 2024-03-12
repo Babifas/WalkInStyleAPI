@@ -53,12 +53,13 @@ namespace WalkInStyleAPI.Services.User_Service
         public async Task<User> Login(LoginDto user)
         {
             var IsUserExist = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == user.UserEmail);
-            if(IsUserExist.isBlocked==true)
-            {
-                throw new Exception("Sorry,Access denied");
-            }
+            
             if (IsUserExist != null && BCrypt.Net.BCrypt.Verify(user.Password, IsUserExist.Password))
             {
+                if (IsUserExist.isBlocked == true)
+                {
+                    throw new Exception("Sorry,Access denied");
+                }
                 return IsUserExist;
             }
             return null;

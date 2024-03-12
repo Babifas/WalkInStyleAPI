@@ -81,7 +81,7 @@ namespace WalkInStyleAPI.Controllers
                     
                     return Ok(new {id=_user.UserId,token=token});  
                 }
-                return NotFound("Incorrect email or password");
+                return Unauthorized("Incorrect email or password");
             }catch(Exception ex)
             {
                 return BadRequest(ex.Message);

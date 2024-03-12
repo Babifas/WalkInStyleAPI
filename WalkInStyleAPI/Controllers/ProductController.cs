@@ -16,7 +16,7 @@ namespace WalkInStyleAPI.Controllers
         { 
            _productService = productService;
         }
-        [HttpGet("Get All Products")]
+        [HttpGet("GetAllProducts")]
         public async Task<IActionResult> GetAllProducts()
         {
             try
@@ -84,8 +84,8 @@ namespace WalkInStyleAPI.Controllers
                  return BadRequest(ex.Message);
             }
         }
-        [HttpPut]
-        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}")]
+      //  [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductDto product, IFormFile image)
         {
             try

@@ -123,6 +123,24 @@ namespace WalkInStyleAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
-       
+        [HttpGet("TotalPrice")]
+        [Authorize]
+        public async Task<IActionResult> TotalPrice()
+        {
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault();
+                var splitToken = token.Split(' ');
+                var jwtToken = splitToken[1];
+                var res = await _cartService.TotalPrice(jwtToken);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occured : " +
+                    $"{ex.Message}");
+            }
+        }
+
     }
 }

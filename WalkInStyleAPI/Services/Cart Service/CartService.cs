@@ -73,7 +73,8 @@ namespace WalkInStyleAPI.Services.Cart_Service
                 {
                     CartId = user.cart.CartId,
                     ProductId = productid,
-                    Quantity = 1
+                    Quantity = 1,
+                   TotalPrice=productExist.OfferPrice
                 });
                 await _dbContext.SaveChangesAsync();
                 return true;
@@ -155,6 +156,14 @@ namespace WalkInStyleAPI.Services.Cart_Service
                 return false;
             }
         }
-  
+        public async Task<decimal> TotalPrice(string token)
+        {
+            int userid = _jWTService.GetUserIdFromToken(token);
+            var cart=await _dbContext.Carts.Include(x => x.carts).FirstOrDefaultAsync(x => x.UserId == userid);
+            decimal total=cart.carts.Sum(x => x.TotalPrice*x.Quantity);
+            return total;
+        }
+
+
     }
 }

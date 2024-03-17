@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WalkInStyleAPI.Models.DTOs.Order;
 using WalkInStyleAPI.Services.Order_Sevice;
 
 namespace WalkInStyleAPI.Controllers
@@ -80,6 +81,45 @@ namespace WalkInStyleAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+        [HttpPost("payment")]
+        [Authorize]
+        public ActionResult Payment(RazorpayDto razorpay)
+        {
+            try
+            {
+                if (razorpay == null)
+                {
+                    return BadRequest("razorpay details must not null here");
+                }
+                var res = _orderService.Payment(razorpay);
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+
+        }
+        [HttpPost("order-create")]
+        [Authorize]
+        public async Task<ActionResult> createOrder(long price)
+        {
+            try
+            {
+                if (price <= 0)
+                {
+                    return BadRequest("enter a valid money ");
+                }
+                var orderId = await _orderService.OrderCreate(price);
+                return Ok(orderId);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+
         }
     }
 }

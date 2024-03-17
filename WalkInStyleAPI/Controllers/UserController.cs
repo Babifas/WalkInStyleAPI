@@ -79,7 +79,7 @@ namespace WalkInStyleAPI.Controllers
                 {
                     string token = GenerateJwtToken(_user);
                     
-                    return Ok(new {id=_user.UserId,token=token});  
+                    return Ok(new {id=_user.UserId,token=token, name = _user.UserName});  
                 }
                 return Unauthorized("Incorrect email or password");
             }catch(Exception ex)

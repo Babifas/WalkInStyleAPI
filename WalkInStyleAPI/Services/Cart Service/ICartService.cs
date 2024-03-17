@@ -9,5 +9,6 @@ namespace WalkInStyleAPI.Services.Cart_Service
         Task<bool> RemoveCart(string token, int productid);
         Task<bool> IncrementQuantity(string token, int productid);
         Task<bool> DecrementQuantity(string token, int productid);
+        Task<decimal> TotalPrice(string token);
     }
 }

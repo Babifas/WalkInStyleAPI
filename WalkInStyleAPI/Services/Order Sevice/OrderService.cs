@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Razorpay.Api;
 using System.ComponentModel;
 using WalkInStyleAPI.Data;
 using WalkInStyleAPI.JWTVerification;
@@ -11,6 +12,7 @@ namespace WalkInStyleAPI.Services.Order_Sevice
 {
     public class OrderService : IOrderService
     {
+        private readonly IConfiguration _configuration;
         private readonly ApDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly IJWTService _jWTService;
@@ -21,6 +23,7 @@ namespace WalkInStyleAPI.Services.Order_Sevice
             _mapper = mapper;
             _jWTService= jWTService;
             HostUrl = configuration["HostUrl:Url"];
+            _configuration=configuration;
         }
         public async Task<bool> AddNewOrder(string token)
         {
@@ -33,7 +36,7 @@ namespace WalkInStyleAPI.Services.Order_Sevice
             {
                 throw new Exception("User id not valid");
             }
-            Order order = new Order
+            Orders order = new Orders
             {
                 UserId = userid
 
@@ -98,6 +101,46 @@ namespace WalkInStyleAPI.Services.Order_Sevice
             int total=await _dbContext.OrderItems.SumAsync(x=>x.Quantity);
             return total;
         }
+        public bool Payment(RazorpayDto razorpay)
+        {
+            if (razorpay == null ||
+        razorpay.razorpay_payment_id == null ||
+        razorpay.razorpay_order_id == null ||
+        razorpay.razorpay_signature == null)
+            {
+                return false;
+            }
+            RazorpayClient client = new RazorpayClient(_configuration["Razorpay:KeyId"], _configuration["Razorpay:KeySecret"]);
+            Dictionary<string, string> attributes = new Dictionary<string, string>();
+            attributes.Add("razorpay_payment_id", razorpay.razorpay_payment_id);
+            attributes.Add("razorpay_order_id", razorpay.razorpay_order_id);
+            attributes.Add("razorpay_signature", razorpay.razorpay_signature);
+
+            Utils.verifyPaymentSignature(attributes);
+
+
+            return true;
+        }
+        public async Task<string> OrderCreate(long price)
+        {
+            Dictionary<string, object> input = new Dictionary<string, object>();
+            Random random = new Random();
+            string TrasactionId = random.Next(0, 1000).ToString();
+            input.Add("amount", Convert.ToDecimal(price) * 100);
+            input.Add("currency", "INR");
+            input.Add("receipt", TrasactionId);
+
+            string key = _configuration["Razorpay:KeyId"];
+            string secret = _configuration["Razorpay:KeySecret"];
+
+            RazorpayClient client = new RazorpayClient(key, secret);
+
+            Razorpay.Api.Order order = client.Order.Create(input);
+            var OrderId = order["id"].ToString();
+
+            return OrderId;
+        }
+
 
     }
 }

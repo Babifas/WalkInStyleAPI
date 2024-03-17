@@ -18,7 +18,7 @@ namespace WalkInStyleAPI.Models
         public bool isBlocked {  get; set; }
         public Cart cart { get; set; }
         public List<Wishlist> wishlists { get; set; }
-        public List<Order> order { get; set; }
+        public List<Orders> order { get; set; }
 
 
     }

@@ -6,9 +6,11 @@ namespace WalkInStyleAPI.Services.Order_Sevice
     {
         Task<bool> AddNewOrder(string token);
         Task<List<OrderViewUser>> OrderDetails(string token);
+        Task<List<OrderViewUser>> OrderDetailsAdmin(int userid);
         Task<decimal> TotalRevanue();
         Task<int> TotalProductsPurchased();
         bool Payment(RazorpayDto razorpay);
         Task<string> OrderCreate(long price);
+
     }
 }

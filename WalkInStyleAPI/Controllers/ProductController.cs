@@ -12,9 +12,9 @@ namespace WalkInStyleAPI.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService productService) 
-        { 
-           _productService = productService;
+        public ProductController(IProductService productService)
+        {
+            _productService = productService;
         }
         [HttpGet("GetAllProducts")]
         public async Task<IActionResult> GetAllProducts()
@@ -22,7 +22,7 @@ namespace WalkInStyleAPI.Controllers
             try
             {
                 return Ok(await _productService.GetAllProducts());
-            }catch (Exception ex)
+            } catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -50,13 +50,13 @@ namespace WalkInStyleAPI.Controllers
             try
             {
                 return Ok(await _productService.GetProductsByCategory(category));
-            }catch (Exception ex)
+            } catch (Exception ex)
             {
-                    return BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
         [HttpGet("ProductsByPage")]
-        public async Task<IActionResult> ProductsByPaginated(int pageNumber,int pageSize)
+        public async Task<IActionResult> ProductsByPaginated(int pageNumber, int pageSize)
         {
             try
             {
@@ -69,41 +69,41 @@ namespace WalkInStyleAPI.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddProduct([FromForm]ProductDto product,IFormFile image)
+        public async Task<IActionResult> AddProduct([FromForm] ProductDto product, IFormFile image)
         {
             try
             {
-                var res=await _productService.AddProduct(product,image);
+                var res = await _productService.AddProduct(product, image);
                 if (res)
                 {
                     return Ok("Product added successfully");
                 }
                 return BadRequest("Category does not exist");
-            }catch (Exception ex)
+            } catch (Exception ex)
             {
-                 return BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
         [HttpPut("{id}")]
-      //  [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductDto product, IFormFile image)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductDto product, IFormFile? image)
         {
             try
             {
-                var res = await _productService.UpdateProduct(id,product,image);
+                var res = await _productService.UpdateProduct(id, product, image);
                 if (res)
                 {
                     return Ok("Product updated successfuly");
                 }
                 return NotFound("The product not found");
-            }catch(Exception ex)
+            } catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteProduct([FromBody] int id)
+        public async Task<IActionResult> DeleteProduct( int id)
         {
             try
             {

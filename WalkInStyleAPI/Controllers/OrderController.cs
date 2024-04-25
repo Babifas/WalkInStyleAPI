@@ -54,6 +54,21 @@ namespace WalkInStyleAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpGet("OrderDeatilsAdmin")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> OrderDetailsAdmin(int userid)
+        {
+            try
+            {
+                var res = await _orderService.OrderDetailsAdmin(userid);
+                return Ok(res);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpGet("TotalRevanue")]
         [Authorize(Roles ="Admin")]
         public async Task<IActionResult> TotalRevanue()

@@ -75,19 +75,65 @@ namespace WalkInStyleAPI.Services.Order_Sevice
             }
             var order = await _dbContext.Orders.Include(o => o.OrderItems)
                 .ThenInclude(o => o.product)
-                .FirstOrDefaultAsync(o => o.UserId == userid);
+                .Where(o => o.UserId == userid).ToListAsync();
             if (order == null)
             {
                 return new List<OrderViewUser>();
             }
-            var orderitems = order.OrderItems.Select(oi => new OrderViewUser
+            List<OrderViewUser> orders = new List<OrderViewUser>();
+            foreach( var orderitem in order)
             {
-                ProductName = oi.product.ProductName,
-                ProductImage =HostUrl+oi.product.Image,
-                Quantity = oi.Quantity,
-                TotalPrice = oi.TotalPrice,
-            }).ToList();
-            return orderitems;
+                foreach( var item in orderitem.OrderItems)
+                {
+                    orders.Add(new OrderViewUser
+                    {
+                        ProductName = item.product.ProductName,
+                        ProductImage = HostUrl + item.product.Image,
+                        OrderStatus = item.OrderStatus,
+                        Quantity = item.Quantity,
+                        TotalPrice = item.TotalPrice,
+                    }
+                    );
+
+                }
+            }
+ 
+            return orders;
+
+        }
+        public async Task<List<OrderViewUser>> OrderDetailsAdmin(int userid)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserId == userid);
+            if (user == null)
+            {
+                throw new Exception("User id not valid");
+            }
+            var order = await _dbContext.Orders.Include(o => o.OrderItems)
+                .ThenInclude(o => o.product)
+                .Where(o => o.UserId == userid).ToListAsync();
+            if (order == null)
+            {
+                return new List<OrderViewUser>();
+            }
+            List<OrderViewUser> orders = new List<OrderViewUser>();
+            foreach (var orderitem in order)
+            {
+                foreach (var item in orderitem.OrderItems)
+                {
+                    orders.Add(new OrderViewUser
+                    {
+                        ProductName = item.product.ProductName,
+                        ProductImage = HostUrl + item.product.Image,
+                        OrderStatus = item.OrderStatus,
+                        Quantity = item.Quantity,
+                        TotalPrice = item.TotalPrice,
+                    }
+                    );
+
+                }
+            }
+
+            return orders;
 
         }
 
@@ -140,7 +186,6 @@ namespace WalkInStyleAPI.Services.Order_Sevice
 
             return OrderId;
         }
-
 
     }
 }
